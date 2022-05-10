@@ -1,7 +1,49 @@
-import 'package:flutter/material.dart';
+// ignore_for_file: unnecessary_new, deprecated_member_use
 
-void main() {
-  runApp(const MyApp());
+import 'package:flutter/material.dart';
+import 'package:english_words/english_words.dart';
+
+import './sign_in_http.dart';
+import './mock_client.dart';
+import './info_list.dart';
+
+void main() => runApp(const FormApp());
+
+class Demo {
+  final String name;
+  final String route;
+  final WidgetBuilder builder;
+
+  const Demo({required this.name, required this.route, required this.builder});
+}
+
+final demos = [
+  Demo(
+    name: '去登录',
+    route: '/signin_http',
+    builder: (context) => SignInHttpDemo(
+      // This sample uses a mock HTTP client.
+      httpClient: mockClient,
+    ),
+  ),
+  // Demo(
+  //     name: '个人信息',
+  //     route: './info_list',
+  //     builder: (context) => const UserInfoList())
+];
+
+class FormApp extends StatelessWidget {
+  const FormApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Form Samples',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      routes: Map.fromEntries(demos.map((d) => MapEntry(d.route, d.builder))),
+      home: const HomePage(),
+    );
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -11,20 +53,88 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter啊哈哈',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
+      title: 'ww的demo',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      routes: Map.fromEntries(demos.map((d) => MapEntry(d.route, d.builder))),
+      home: const HomePage(),
+    );
+  }
+}
+
+class HomePage extends StatelessWidget {
+  const HomePage({Key? key}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('ww的demo'),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      body: ListView(
+        children: [...demos.map((d) => DemoTile(demo: d))],
+      ),
+    );
+  }
+}
+
+class DemoTile extends StatelessWidget {
+  final Demo? demo;
+
+  const DemoTile({this.demo, Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(demo!.name),
+      onTap: () {
+        Navigator.pushNamed(context, demo!.route);
+      },
+    );
+  }
+}
+
+class FirstPage extends StatelessWidget {
+  const FirstPage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('第一页'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(30.0),
+        child: RaisedButton(
+          child: const Text('跳转到第二页'),
+          onPressed: () {
+            Navigator.push(
+              //1
+              context,
+              MaterialPageRoute(builder: (context) => const SecondPage()),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class SecondPage extends StatelessWidget {
+  const SecondPage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('第二页'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(30.0),
+        child: RaisedButton(
+            child: const Text('回到上一页'),
+            onPressed: () {
+              Navigator.pop(context); //2
+            }),
+      ),
     );
   }
 }
@@ -96,7 +206,7 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text(
-              'You have pushed the button this many times:',
+              'hello world:',
             ),
             Text(
               '$_counter',
